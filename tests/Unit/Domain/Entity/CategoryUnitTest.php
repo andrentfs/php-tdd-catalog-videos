@@ -5,6 +5,7 @@ namespace Tests\Unit\Domain\Entity;
 use Core\Domain\Exception\EntityValidationException;
 use Core\Domain\Entity\Category;
 use PHPUnit\Framework\TestCase;
+use Ramsey\Uuid\Uuid;
 use Throwable;
 
 class CategoryUnitTest extends TestCase
@@ -12,13 +13,12 @@ class CategoryUnitTest extends TestCase
     public function testGetAtributes()
     {
         $category = new Category(
-            id: 'uuid.value',
             name: 'name',
             description: 'desc',
             isActive: true
         );
         
-        $this->assertEquals('uuid.value', $category->id);
+        $this->assertNotEmpty($category->id);
         $this->assertEquals('name', $category->name);
         $this->assertEquals('desc', $category->description);
         $this->assertEquals(true, $category->isActive);
@@ -27,7 +27,6 @@ class CategoryUnitTest extends TestCase
     public function testActivated()
     {
         $cagetory = new Category(
-            id: 'uuid.value',
             name: 'name',
             description: 'desc',
             isActive: false,
@@ -43,7 +42,6 @@ class CategoryUnitTest extends TestCase
     public function testDisabled()
     {
         $cagetory = new Category(
-            id: 'uuid.value',
             name: 'name',
             description: 'desc',
         );
@@ -59,7 +57,6 @@ class CategoryUnitTest extends TestCase
     {
         try {
             $category = new Category(
-                id: 'uuid.value',
                 name: 'na',
                 description: 'desc',
             );
@@ -77,7 +74,6 @@ class CategoryUnitTest extends TestCase
     {
         try {
             $category = new Category(
-                id: 'uuid.value',
                 name: 'name',
                 description: random_bytes(9999999),
             );
@@ -93,8 +89,10 @@ class CategoryUnitTest extends TestCase
 
     public function testUpdate()
     {
+        $uuid = (string) Uuid::uuid4()->toString();
+
         $category = new Category(
-            id: 'uuid.value',
+            id: $uuid,
             name: 'name',
             description: 'desc',
         );
@@ -104,24 +102,48 @@ class CategoryUnitTest extends TestCase
             description: 'desc_updated'
         );
 
+        $this->assertEquals($uuid, $category->id());
         $this->assertEquals('updated', $category->name);
         $this->assertEquals('desc_updated', $category->description);
     }
 
     public function testUpdateEmptyDescription()
     {
+        $uuid = (string) Uuid::uuid4()->toString();
+
         $category = new Category(
-            id: 'uuid.value',
+            id:  $uuid,
             name: 'name',
             description: 'desc',
         );
 
         $category->update(
             name: 'updated',
-            description: 'desc'
+            description: $category->description
         );
 
         $this->assertEquals('updated', $category->name);
         $this->assertEquals('desc', $category->description);
+    }
+
+    public function testId()
+    {
+        $category = new Category(
+            name: 'test name',
+        );
+
+        $this->assertNotEmpty('id', $category->id);
+        $uuid = (string) Uuid::uuid4()->toString();
+        $category = new Category(
+            id: $uuid,
+            name: 'test name',
+        );
+
+        $category->update(
+            name: 'new name',
+            description: 'new desc'
+        );
+
+        $this->assertEquals($uuid, $category->id());
     }
 }
