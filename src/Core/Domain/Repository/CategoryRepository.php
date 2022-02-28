@@ -6,11 +6,6 @@ use Core\Domain\Entity\Category;
 
 interface CategoryRepositoryInterface
 {
-    /** 
-     * Interface insert
-     * @param Category $category 
-     * @return Category 
-     */
     public function insert(Category $category): Category;
     public function findById(string $categoryId): Category;
     public function findAll(string $filter = '', $order = 'DESC'): array;
