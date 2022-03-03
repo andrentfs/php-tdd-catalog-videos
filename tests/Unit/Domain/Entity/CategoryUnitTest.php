@@ -13,14 +13,15 @@ class CategoryUnitTest extends TestCase
     public function testGetAtributes()
     {
         $category = new Category(
-            name: 'name',
-            description: 'desc',
+            name: 'New Cat',
+            description: 'New desc',
             isActive: true
         );
         
+        $this->assertNotEmpty($category->createdAt());
         $this->assertNotEmpty($category->id);
-        $this->assertEquals('name', $category->name);
-        $this->assertEquals('desc', $category->description);
+        $this->assertEquals('New Cat', $category->name);
+        $this->assertEquals('New desc', $category->description);
         $this->assertEquals(true, $category->isActive);
     }
 
@@ -95,6 +96,8 @@ class CategoryUnitTest extends TestCase
             id: $uuid,
             name: 'name',
             description: 'desc',
+            isActive: true,
+            createdAt: '2023-01-01 00:00:00',
         );
 
         $category->update(
